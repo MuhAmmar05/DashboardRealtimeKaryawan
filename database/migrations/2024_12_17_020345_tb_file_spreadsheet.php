@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('tbFileSpreadsheet', function (Blueprint $table) {
             $table->increments('idSpreadsheet'); // Primary Key Auto Increment
-            $table->string('namaFile');
+            $table->string('namaKaryawan');
+            $table->integer('usia');
+            $table->string('departemen');
+            $table->string('jabatan');
+            $table->string('jenisKelamin');
+            $table->string('jenisKaryawan');
+            $table->string('kualifikasiKaryawan');
+            $table->string('jabatanFungsional');
             $table->unsignedInteger('createdBy');
             $table->timestamp('createDate')->useCurrent();
             $table->integer('status');

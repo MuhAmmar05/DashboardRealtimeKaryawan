@@ -11,7 +11,19 @@ class FileSpreadsheet extends Model
     protected $primaryKey = 'idSpreadsheet';
     public $timestamps = false;
 
-    protected $fillable = ['namaFile', 'createdBy', 'createDate', 'status'];
+    protected $fillable = [
+        'namaKaryawan',
+        'usia',
+        'departemen',
+        'jabatan',
+        'jenisKelamin',
+        'jenisKaryawan',
+        'kualifikasiKaryawan',
+        'jabatanFungsional',
+        'createdBy',
+        'createDate',
+        'status'
+    ];
 
     public function user(): BelongsTo
     {

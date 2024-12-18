@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    Maatwebsite\Excel\Facades\Excel::class,
+    'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
+
 ];
