@@ -3,30 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Model
 {
-    protected $table = 'tbUser';
-    protected $primaryKey = 'idUser';
+    protected $table = 'sso_msuser';
+    public $incrementing = false;
     public $timestamps = false;
 
-    protected $fillable = ['username', 'password', 'idRole', 'createdBy', 'createDate', 'status'];
+    protected $primaryKey = ['usr_id', 'rol_id', 'app_id'];
+    protected $fillable = [
+        'usr_id',
+        'rol_id',
+        'app_id',
+        'usr_status',
+        'usr_created_by',
+        'usr_created_date',
+        'usr_modif_by',
+        'usr_modif_date',
+    ];
 
-    public function role(): BelongsTo
+    public function role()
     {
-        return $this->belongsTo(Role::class, 'idRole', 'idRole');
+        return $this->belongsTo(Role::class, 'rol_id', 'rol_id');
     }
 
-
-    public function karyawan(): BelongsTo
+    public function app()
     {
-        return $this->belongsTo(Karyawan::class, 'username', 'username');
-    }
-
-    public function files(): HasMany
-    {
-        return $this->hasMany(FileSpreadsheet::class, 'createdBy', 'username');
+        return $this->belongsTo(App::class, 'app_id', 'app_id');
     }
 }

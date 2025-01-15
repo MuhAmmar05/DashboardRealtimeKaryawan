@@ -3,30 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FileSpreadsheet extends Model
 {
-    protected $table = 'tbFileSpreadsheet';
-    protected $primaryKey = 'idSpreadsheet';
+    protected $table = 'dkw_trfilespreadsheet';
+    protected $primaryKey = 'fsp_id';
     public $timestamps = false;
 
     protected $fillable = [
-        'namaKaryawan',
-        'usia',
-        'departemen',
-        'jabatan',
-        'jenisKelamin',
-        'jenisKaryawan',
-        'kualifikasiKaryawan',
-        'jabatanFungsional',
-        'createdBy',
-        'createDate',
-        'status'
+        'fsp_namaFile',
+        'fsp_status',
+        'fsp_created_by',
+        'fsp_created_date',
+        'fsp_modif_by',
+        'fsp_modif_date'
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'createdBy', 'idUser');
-    }
 }
