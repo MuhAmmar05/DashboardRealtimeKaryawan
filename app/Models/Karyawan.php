@@ -15,10 +15,9 @@ class Karyawan extends Model
     protected $fillable = [
         'kry_nama_depan',
         'kry_nama_blkg',
+        'kry_username',
         'kry_tgl_lahir',
         'kry_jenis_kelamin',
-        'kry_alamat',
-        'kry_email',
         'jab_main_id',
         'jab_sec_id',
         'gol_id',
@@ -29,6 +28,24 @@ class Karyawan extends Model
         'kry_modif_by',
         'kry_modif_date',
     ];
+
+    public function scopeFilter($query, $filters)
+    {
+        return $query
+            ->when($filters['keyword'] ?? null, function ($query, $keyword) {
+                $query->where(function ($subQuery) use ($keyword) {
+                    $subQuery->where('kry_nama_depan', 'like', "%{$keyword}%")
+                            ->orWhere('kry_nama_blkg', 'like', "%{$keyword}%");
+                });
+            })
+            ->when($filters['jabatan'] ?? null, function ($query, $jabatan) {
+                $query->where('jab_main_id', $jabatan)
+                      ->orWhere('jab_sec_id', $jabatan);
+            })
+            ->when($filters['golongan'] ?? null, function ($query, $golongan) {
+                $query->where('gol_id', $golongan);
+            });
+    }
 
     // Relasi dengan tabel ess_msjabatan
     public function jabatanUtama(): BelongsTo
