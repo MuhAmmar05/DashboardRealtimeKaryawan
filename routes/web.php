@@ -5,12 +5,12 @@ use App\Http\Controllers\SpreadsheetController;
 use App\Http\Controllers\UploadExcelController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('login');
 });
 
-Route::get('/upload', function () {
-    return view('excel.upload');
-});
+// Route::get('/upload', function () {
+//     return view('excel.upload');
+// });
 
 Route::get('/file-upload', [UploadExcelController::class, 'index']);
 Route::post('/file-upload', [UploadExcelController::class, 'upload']);
