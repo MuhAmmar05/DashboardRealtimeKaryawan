@@ -15,10 +15,9 @@ class Karyawan extends Model
     protected $fillable = [
         'kry_nama_depan',
         'kry_nama_blkg',
+        'kry_username',
         'kry_tgl_lahir',
         'kry_jenis_kelamin',
-        'kry_alamat',
-        'kry_email',
         'jab_main_id',
         'jab_sec_id',
         'gol_id',

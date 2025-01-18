@@ -14,5 +14,6 @@ Route::get('/upload', function () {
 
 Route::get('/file-upload', [UploadExcelController::class, 'index']);
 Route::post('/file-upload', [UploadExcelController::class, 'upload']);
-Route::post('/upload', [SpreadsheetController::class, 'upload']);
-Route::get('/chart', [SpreadsheetController::class, 'showChart']);
+Route::get('/data-excel', [UploadExcelController::class, 'showData'])->name('excel.data');
+// Route::post('/upload', [SpreadsheetController::class, 'upload']);
+// Route::get('/chart', [SpreadsheetController::class, 'showChart']);
