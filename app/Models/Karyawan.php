@@ -29,6 +29,24 @@ class Karyawan extends Model
         'kry_modif_date',
     ];
 
+    public function scopeFilter($query, $filters)
+    {
+        return $query
+            ->when($filters['keyword'] ?? null, function ($query, $keyword) {
+                $query->where(function ($subQuery) use ($keyword) {
+                    $subQuery->where('kry_nama_depan', 'like', "%{$keyword}%")
+                            ->orWhere('kry_nama_blkg', 'like', "%{$keyword}%");
+                });
+            })
+            ->when($filters['jabatan'] ?? null, function ($query, $jabatan) {
+                $query->where('jab_main_id', $jabatan)
+                      ->orWhere('jab_sec_id', $jabatan);
+            })
+            ->when($filters['golongan'] ?? null, function ($query, $golongan) {
+                $query->where('gol_id', $golongan);
+            });
+    }
+
     // Relasi dengan tabel ess_msjabatan
     public function jabatanUtama(): BelongsTo
     {
