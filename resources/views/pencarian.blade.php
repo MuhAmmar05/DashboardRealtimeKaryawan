@@ -15,9 +15,45 @@
         <h1 class="mb-4 text-center">Pencarian Karyawan</h1>
 
         <!-- Form Pencarian -->
-        <form action="{{ route('pencarian.index') }}" method="GET" class="row g-3 mb-4">
-            <div class="col-md-10">
-                <input type="text" name="keyword" class="form-control" placeholder="Cari Karyawan..." value="{{ old('keyword', $keyword ?? '') }}">
+        {{-- <form action="{{ route('pencarian.index') }}" method="GET" class="row g-3 mb-4"> --}}
+        <form action="" method="GET" class="row g-3 mb-4">
+            <div class="col-md-2">
+                <input type="text" name="searchQuery" class="form-control" placeholder="Cari Karyawan..." value="{{ old('searchQuery', $searchQuery ?? '') }}">
+            </div>
+            <div class="col-md-2">
+                <select name="ddsort" class="form-select">
+                    <option value="NPK asc" @selected(old('ddsort', $sort ?? '') == 'NPK asc')>NPK [↑]</option>
+                    <option value="NPK desc" @selected(old('ddsort', $sort ?? '') == 'NPK desc')>NPK [↓]</option>
+                    <option value="Usia asc" @selected(old('ddsort', $sort ?? '') == 'Usia asc')>Usia [↑]</option>
+                    <option value="Usia desc" @selected(old('ddsort', $sort ?? '') == 'Usia desc')>Usia [↓]</option>
+                    <option value="Tanggal Masuk Kerja asc" @selected(old('ddsort', $sort ?? '') == 'Tanggal Masuk Kerja asc')>Tanggal Masuk Kerja [↑]</option>
+                    <option value="Tanggal Masuk Kerja desc" @selected(old('ddsort', $sort ?? '') == 'Tanggal Masuk Kerja desc')>Tanggal Masuk Kerja [↓]</option>
+                    <option value="Golongan asc" @selected(old('ddsort', $sort ?? '') == 'Golongan asc')>Golongan [↑]</option>
+                    <option value="Golongan desc" @selected(old('ddsort', $sort ?? '') == 'Golongan desc')>Golongan [↓]</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="ddjabatan" class="form-select">
+                    <option value="">-- Semua --</option>
+                    <option value="Staff" @selected(old('ddjabatan', $jabatan ?? '') == 'Staff')>Staff</option>
+                    <option value="Kepala Seksi" @selected(old('ddjabatan', $jabatan ?? '') == 'Kepala Seksi')>Kepala Seksi</option>
+                    <option value="Kepala Departemen" @selected(old('ddjabatan', $jabatan ?? '') == 'Kepala Departemen')>Kepala Departemen</option>
+                    <option value="Wakil Direktur" @selected(old('ddjabatan', $jabatan ?? '') == 'Wakil Direktur')>Wakil Direktur</option>
+                    <option value="Direktur" @selected(old('ddjabatan', $jabatan ?? '') == 'Direktur')>Direktur</option>
+                    <option value="Sekretaris Prodi" @selected(old('ddjabatan', $jabatan ?? '') == 'Sekretaris Prodi')>Sekretaris Prodi</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="ddgolongan" class="form-select">
+                    <option value="">-- Semua --</option>
+                    <option value="II" @selected(old('ddgolongan', $golongan ?? '') == 'II')>II</option>
+                    <option value="III" @selected(old('ddgolongan', $golongan ?? '') == 'III')>III</option>
+                    <option value="IV" @selected(old('ddgolongan', $golongan ?? '') == 'IV')>IV</option>
+                    <option value="V" @selected(old('ddgolongan', $golongan ?? '') == 'V')>V</option>
+                    <option value="ABS/Outsourcing" @selected(old('ddgolongan', $golongan ?? '') == 'ABS/Outsourcing')>ABS/ Outsourcing</option>
+                    <option value="DOSEN LUAR" @selected(old('ddgolongan', $golongan ?? '') == 'DOSEN LUAR')>Dosen Luar</option>
+                    <option value="MAGANG" @selected(old('ddgolongan', $golongan ?? '') == 'MAGANG')>Magang</option>
+                </select>
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100">Cari</button>
@@ -34,30 +70,36 @@
                         <th>Nama Karyawan</th>
                         <th>Tanggal Lahir</th>
                         <th>Usia</th>
+                        <th>Kualifikasi</th>
                         <th>Jenis Kelamin</th>
                         <th>Jabatan</th>
+                        <th>Departemen</th>
                         <th>Golongan</th>
                         <th>Tanggal Masuk Kerja</th>
+                        <th>Jabatan Fungsional Dosen</th>
                         <th>Lama Kerja</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($karyawan as $index => $data)
                         <tr>
-                            <td>{{ $karyawan->firstItem() + $index }}</td>
-                            <td>{{ $data->kry_id }}</td>
-                            <td>{{ $data->kry_nama_depan }} {{ $data->kry_nama_blkg }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->kry_tgl_lahir)->format('d-m-Y') }}</td>
-                            <td>{{ round(\Carbon\Carbon::parse($data->kry_tgl_lahir)->age) }}</td>
-                            <td>{{ $data->kry_jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
-                            <td>{{ $data->jabatanUtama->jab_desc ?? 'Tidak Ada' }} - {{ $data->jabatanSekunder->jab_desc ?? 'Tidak Ada' }}</td>
-                            <td>{{ $data->golongan->gol_desc ?? 'Tidak Ada' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->kry_tgl_masuk_kerja)->format('d-m-Y') }}</td>
-                            <td>{{ round(\Carbon\Carbon::parse($data->kry_tgl_masuk_kerja)->diffInYears(\Carbon\Carbon::now())) }}</td>
+                            <td>{{ $data->No }}</td>
+                            <td>{{ $data->NPK }}</td>
+                            <td>{{ $data->{'Nama Karyawan'} }}</td>
+                            <td>{{ \Carbon\Carbon::parse($data->{'Tanggal Lahir'})->format('d-m-Y') }}</td>
+                            <td>{{ $data->{'Usia'} }}</td>
+                            <td>{{ $data->Kualifikasi }}</td>
+                            <td>{{ $data->{'Jenis Kelamin'} }}</td>
+                            <td>{{ $data->Jabatan }}</td>
+                            <td>{{ $data->Departemen }}</td>
+                            <td>{{ $data->Golongan }}</td>
+                            <td>{{ \Carbon\Carbon::parse($data->{'Tanggal Masuk Kerja'})->format('d-m-Y') }}</td>
+                            <td>{{ $data->{'Jabatan Fungsional Dosen'} }}</td>
+                            <td>{{ $data->{'Lama Kerja'} }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="text-center">Tidak ada data karyawan ditemukan.</td>
+                            <td colspan="13" class="text-center">Tidak ada data karyawan ditemukan.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -65,9 +107,9 @@
         </div>
 
         <!-- Pagination -->
-        <div class="d-flex justify-content-center mt-4">
+        {{-- <div class="d-flex justify-content-center mt-4">
             {{ $karyawan->links('pagination::bootstrap-5') }}
-        </div>
+        </div> --}}
 
         <!-- Tombol Export -->
         <div class="d-flex justify-content-between mb-3">

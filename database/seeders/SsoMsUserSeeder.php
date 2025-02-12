@@ -11,7 +11,7 @@ class SsoMsUserSeeder extends Seeder
     {
         DB::table('sso_msuser')->insert([
             [
-                'usr_id' => 'ammar.muzz',
+                'usr_id' => 'ammar.muzhaffar',
                 'rol_id' => 'ROL01',
                 'app_id' => 'APP01',
                 'usr_password' => 'admin123',
@@ -22,7 +22,7 @@ class SsoMsUserSeeder extends Seeder
                 'usr_modif_date' => null
             ],
             [
-                'usr_id' => 'putri.nur',
+                'usr_id' => 'sonny.austin',
                 'rol_id' => 'ROL02',
                 'app_id' => 'APP01',
                 'usr_password' => 'manajemen123',

@@ -19,6 +19,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('jab_main_id')->nullable();
             $table->unsignedBigInteger('jab_sec_id')->nullable();
             $table->unsignedBigInteger('gol_id')->nullable();
+            $table->unsignedBigInteger('str_main_id')->nullable();
+            $table->unsignedBigInteger('str_sec_id')->nullable();
 
             $table->dateTime('kry_tgl_masuk_kerja')->nullable();
             $table->string('kry_status', 12)->nullable();
@@ -31,6 +33,8 @@ return new class extends Migration {
             $table->foreign('jab_main_id')->references('jab_id')->on('ess_msjabatan')->nullOnDelete();
             $table->foreign('jab_sec_id')->references('jab_id')->on('ess_msjabatan')->nullOnDelete();
             $table->foreign('gol_id')->references('gol_id')->on('ess_msgolongan')->nullOnDelete();
+            $table->foreign('str_main_id')->references('str_id')->on('ess_msstruktur')->nullOnDelete();
+            $table->foreign('str_sec_id')->references('str_id')->on('ess_msstruktur')->nullOnDelete();
         });
     }
 

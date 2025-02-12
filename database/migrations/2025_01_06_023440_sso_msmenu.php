@@ -18,6 +18,10 @@ return new class extends Migration {
             $table->dateTime('men_created_date')->nullable();
             $table->string('men_modif_by', 50)->nullable();
             $table->dateTime('men_modif_date')->nullable();
+
+            // Constraints
+            $table->foreign('app_id')->references('app_id')->on('sso_msaplikasi')->nullOnDelete();
+            $table->foreign('rol_id')->references('rol_id')->on('sso_msrole')->nullOnDelete();
         });
     }
 
