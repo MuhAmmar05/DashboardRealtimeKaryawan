@@ -9,75 +9,153 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/js/app.js">
 </head>
-<body>
-    <div class="container mt-5">
-        <h1 class="mb-4 text-center">Pencarian Karyawan</h1>
-
-        <!-- Form Pencarian -->
-        <form action="{{ route('pencarian.index') }}" method="GET" class="row g-3 mb-4">
-            <div class="col-md-10">
-                <input type="text" name="keyword" class="form-control" placeholder="Cari Karyawan..." value="{{ old('keyword', $keyword ?? '') }}">
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Cari</button>
-            </div>
-        </form>
-
-        <!-- Tabel Hasil Pencarian -->
-        <div class="table-responsive">
-            <table id="karyawanTable" class="table table-striped table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>No</th>
-                        <th>NPK</th>
-                        <th>Nama Karyawan</th>
-                        <th>Tanggal Lahir</th>
-                        <th>Usia</th>
-                        <th>Jenis Kelamin</th>
-                        <th>Jabatan</th>
-                        <th>Golongan</th>
-                        <th>Tanggal Masuk Kerja</th>
-                        <th>Lama Kerja</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($karyawan as $index => $data)
-                        <tr>
-                            <td>{{ $karyawan->firstItem() + $index }}</td>
-                            <td>{{ $data->kry_id }}</td>
-                            <td>{{ $data->kry_nama_depan }} {{ $data->kry_nama_blkg }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->kry_tgl_lahir)->format('d-m-Y') }}</td>
-                            <td>{{ round(\Carbon\Carbon::parse($data->kry_tgl_lahir)->age) }}</td>
-                            <td>{{ $data->kry_jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
-                            <td>{{ $data->jabatanUtama->jab_desc ?? 'Tidak Ada' }} - {{ $data->jabatanSekunder->jab_desc ?? 'Tidak Ada' }}</td>
-                            <td>{{ $data->golongan->gol_desc ?? 'Tidak Ada' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->kry_tgl_masuk_kerja)->format('d-m-Y') }}</td>
-                            <td>{{ round(\Carbon\Carbon::parse($data->kry_tgl_masuk_kerja)->diffInYears(\Carbon\Carbon::now())) }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="10" class="text-center">Tidak ada data karyawan ditemukan.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+<body style="background-color: white">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container-fluid">
+            <span class="hamburger text-black" id="hamburger">&#9776;</span>
+            <img src="/assets/astratech.png" alt="Logo" class="logo" id="logo">
         </div>
+    </nav> 
 
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center mt-4">
-            {{ $karyawan->links('pagination::bootstrap-5') }}
-        </div>
-
-        <!-- Tombol Export -->
-        <div class="d-flex justify-content-between mb-3">
-            <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
-            <button class="btn btn-danger" onclick="exportToPDF()">Export to PDF</button>
-        </div>
-
+    <!-- Sidebar -->
+    <div id="sidebar" class="samping">
+        <nav class="nav flex-column p-3">
+            <a class="nav-link" href="/login">
+                <i class="bi bi-box-arrow-left me-2"></i> Logout
+            </a>
+            <a class="nav-link" href="/dashboard">
+                <i class="bi bi-grid me-2"></i> Dashboard
+            </a>
+            <a class="nav-link" href="#">
+                <i class="bi bi-search me-2"></i> Pencarian
+            </a>
+        </nav>
     </div>
 
+    <div id="content" class="">
+        <div class="container-fluid">
+            <div class="row px-2">
+                <div class="container mt-5">
+                    <!-- Form Pencarian -->
+                    <form action="{{ route('pencarian.index') }}" method="GET" class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <input type="text" name="keyword" class="form-control" placeholder="Cari Karyawan..." value="{{ old('keyword', $keyword ?? '') }}">
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select">
+                                <option value="[NPK] asc">NPK [↑]</option>
+                                <option value="[NPK] desc">NPK [↓]</option>
+                                <option value="[Usia] asc">Usia [↑]</option>
+                                <option value="[Usia] desc">Usia [↓]</option>
+                                <option value="[Tanggal Masuk Kerja] asc">Tanggal Masuk Kerja [↑]</option>
+                                <option value="[Tanggal Masuk Kerja] desc">Tanggal Masuk Kerja [↓]</option>
+                                <option value="[Golongan] asc">Golongan [↑]</option>
+                                <option value="[Golongan] desc">Golongan [↓]</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select">
+                                <option value="semua">-- Semua --</option>
+                                <option value="Staff">Staff</option>
+                                <option value="Kepala Seksi">Kepala Seksi</option>
+                                <option value="Kepala Departemen">Kepala Departemen</option>
+                                <option value="Wakil Direktur">Wakil Direktur</option>
+                                <option value="Direktur">Direktur</option>
+                                <option value="Sekretaris Prodi">Sekretaris Prodi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select">
+                                <option value="semua">-- Semua --</option>
+                                <option value="II">II</option>
+                                <option value="III">III</option>
+                                <option value="IV">IV</option>
+                                <option value="V">V</option>                                <option value="1">Golongan</option>
+                                <option value="ABS/Outsourcing">ABS/Outsourcing</option>
+                                <option value="DOSEN LUAR">DOSEN LUAR</option>
+                                <option value="MAGANG">MAGANG</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">Cari</button>
+                        </div>
+                    </form>
+
+                    <!-- Tabel Hasil Pencarian -->
+                    <div class="table-responsive">
+                        <table id="karyawanTable" class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>No</th>
+                                    <th>NPK</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Tanggal Lahir</th>
+                                    <th>Usia</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Jabatan</th>
+                                    <th>Golongan</th>
+                                    <th>Tanggal Masuk Kerja</th>
+                                    <th>Lama Kerja</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($karyawan as $index => $data)
+                                    <tr>
+                                        <td>{{ $karyawan->firstItem() + $index }}</td>
+                                        <td>{{ $data->kry_id }}</td>
+                                        <td>{{ $data->kry_nama_depan }} {{ $data->kry_nama_blkg }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($data->kry_tgl_lahir)->format('d-m-Y') }}</td>
+                                        <td>{{ round(\Carbon\Carbon::parse($data->kry_tgl_lahir)->age) }}</td>
+                                        <td>{{ $data->kry_jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                                        <td>{{ $data->jabatanUtama->jab_desc ?? 'Tidak Ada' }} - {{ $data->jabatanSekunder->jab_desc ?? 'Tidak Ada' }}</td>
+                                        <td>{{ $data->golongan->gol_desc ?? 'Tidak Ada' }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($data->kry_tgl_masuk_kerja)->format('d-m-Y') }}</td>
+                                        <td>{{ round(\Carbon\Carbon::parse($data->kry_tgl_masuk_kerja)->diffInYears(\Carbon\Carbon::now())) }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="10" class="text-center">Tidak ada data karyawan ditemukan.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $karyawan->links('pagination::bootstrap-5') }}
+                    </div>
+
+                    <!-- Tombol Export -->
+                    <div class="d-flex">
+                        <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
+                        <button class="btn btn-danger" onclick="exportToPDF()" style="margin-left: 5px">Export to PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
+        document.getElementById('hamburger').addEventListener('click', function () {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            const hamburger = document.getElementById('hamburger');
+            const logo = document.getElementById('logo');
+
+            sidebar.classList.toggle('active');
+            content.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            logo.classList.toggle('active');
+        });
         async function exportToExcel() {
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Karyawan');

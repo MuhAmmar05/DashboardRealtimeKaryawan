@@ -28,17 +28,14 @@
     <!-- Sidebar -->
     <div id="sidebar" class="samping">
         <nav class="nav flex-column p-3">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/login">
                 <i class="bi bi-box-arrow-left me-2"></i> Logout
             </a>
             <a class="nav-link" href="#">
                 <i class="bi bi-grid me-2"></i> Dashboard
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/pencarian">
                 <i class="bi bi-search me-2"></i> Pencarian
-            </a>
-            <a class="nav-link" href="#">
-                <i class="bi bi-upload me-2"></i> Upload
             </a>
         </nav>
     </div>
@@ -94,7 +91,7 @@
                 </div>     
                 
                 <!-- Kehadiran Chart -->
-                <div class="col-lg-6 col-md-12 mt-4">
+                <div class="col-lg-12 col-md-12 mt-4">
                     <div class="card shadow-lg border-0 px-2 py-1">
                         <div class="card-body">
                             <canvas id="KehadiranChart" style="height: 400px"></canvas>
@@ -110,7 +107,6 @@
                                 <select id="filterJenis" class="form-select">
                                     <option value="Gender">Gender</option>
                                     <option value="Jabatan">Jabatan</option>
-                                    <option value="Departemen">Departemen</option>
                                     <option value="Usia">Usia</option>
                                 </select>
                             </div>
@@ -121,17 +117,24 @@
                 </div>
                 
                 <div class="col-lg-6 col-md-12 mt-4">
-                    <div class="card shadow-lg border-0 px-2 py-1 mb-4">
-                        <div class="card-body">
-                            <canvas id="KualifikasiChart" style="height: 400px"></canvas>
+                    <div class="card shadow-lg border-0 px-2 py-1">
+                        <!-- Filter Dropdown di kanan atas -->
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="me-3 mt-4">
+                                <select id="filterJeniskaryawan" class="form-select">
+                                    <option value="Kualifikasi">Kualifikasi</option>
+                                    <option value="Jabatan">Jabfung</option>
+                                </select>
+                            </div>
                         </div>
+                        <canvas id="BarChartKaryawan" class="chart-canvas1" style="height: 400px"></canvas>
                     </div>
                 </div>
 
-                <div class="col-lg-6 col-md-12 mt-4">
+                <div class="col-lg-12 col-md-12 mt-4">
                     <div class="card shadow-lg border-0 px-2 py-1 mb-4">
                         <div class="card-body">
-                            <canvas id="JafungChart" style="height: 400px"></canvas>
+                            <canvas id="DepartemenChart" style="height: 400px"></canvas>
                         </div>
                     </div>
                 </div>
@@ -208,7 +211,6 @@
         // Initial dummy data for chart
         const dataGender = [50, 50]; // Dummy data for Gender
         const dataJabatan = [20, 30, 25, 15, 5, 5]; // Dummy data for Jabatan
-        const dataDepartemen = [20, 30, 25, 15, 10]; // Dummy data for Departemen
         const dataUsia = [10, 15, 20, 10, 5, 10, 30]; // Dummy data for Usia
 
         let filterJenis = 'Gender'; // Initial filter value
@@ -242,26 +244,13 @@
             } else if (filterJenis === "Jabatan") {
                 return {
                     labels: [
-                        "Staff - Kepala Seksi", "Kepala Departemen - Wakil Direktur",
-                        "Kepala Seksi - Kepala Departemen", "Sekretaris Prodi - Staff",
-                        "Direktur - Sekretaris Prodi", "Staff - Kepala Departemen"
+                        "Direktur", "Wakil Direktur",
+                        "Kepala Departemen", "Kepala Seksi", "Staff"
                     ],
                     datasets: [{
                         data: dataJabatan,
                         backgroundColor: [
                             "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#C9CBCF"
-                        ],
-                        borderWidth: 2,
-                        cutout: "70%" // Donut chart
-                    }]
-                };
-            } else if (filterJenis === "Departemen") {
-                return {
-                    labels: ["HR", "Marketing", "Engineering", "Finance", "IT"],
-                    datasets: [{
-                        data: dataDepartemen,
-                        backgroundColor: [
-                            "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"
                         ],
                         borderWidth: 2,
                         cutout: "70%" // Donut chart
@@ -286,153 +275,180 @@
             return {};
         }
 
-// Function to get chart options based on filter (Updated for percentages)
-function getChartOptions() {
-    return {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            title: {
-                display: true,
-                text: filterJenis === "Gender" ? "Gender Karyawan" :
-                    filterJenis === "Usia" ? "Usia Karyawan" :
-                    filterJenis === "Departemen" ? "Departemen Karyawan" :
-                    filterJenis === "Jabatan" ? "Jabatan Karyawan" : "",
-                color: "black",
-                font: {
-                    size: '20px',
-                    weight: "bold",
-                    family: "Barlow",
-                },
-                padding: { top: -3, bottom: 10 }
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-                labels: {
-                    color: "black",
-                    font: { size: 14, family: "Barlow" }
-                }
-            },
-            datalabels: {
-                color: "black",
-                font: { weight: "bold", size: 14 },
-                formatter: (value, context) => {
-                    const data = context.chart.data.datasets[0].data;
-                    const total = data.reduce((sum, val) => sum + (val || 0), 0);
-                    if (total === 0) return "0%";  // If no data
-                    const percentage = ((value / total) * 100).toFixed(1);
-                    return `${percentage}%`; // Correct template literal syntax
-                },
-                anchor: "center", // Centered label
-                align: "center" // Centered label alignment
-            }
-        },
-    };
-}
-
-
-
-        // Kualifikasi Karyawan Chart Data
-        const dataKualifikasiChart = {
-            labels: ['D4', 'S1', 'D3', 'SMA/K'],
-            datasets: [{
-                label: "Kualifikasi Karyawan",
-                data: [10, 50, 30, 10], // Example data: Adjust this with actual values
-                backgroundColor: "rgba(13, 110, 253, 0.4)",
-                borderColor: "rgba(13, 110, 253, 0.8)",
-                borderWidth: 2,
-                borderRadius: 5,
-                borderSkipped: false,
-            }],
-        };
-
-        const optionsKualifikasi = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Kualifikasi Karyawan",
-                    color: "black",
-                    font: {
-                        size: "20px",
-                        weight: "bold",
-                        family: "Barlow",
+        // Function to get chart options based on filter (Updated for percentages)
+        function getChartOptions() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: filterJenis === "Gender" ? "Gender Karyawan" :
+                            filterJenis === "Usia" ? "Usia Karyawan" :
+                            filterJenis === "Jabatan" ? "Jabatan Karyawan" : "",
+                        color: "black",
+                        font: {
+                            size: '20px',
+                            weight: "bold",
+                            family: "Barlow",
+                        },
+                        padding: { top: -3, bottom: 10 }
                     },
+                    legend: {
+                        display: true,
+                        position: "bottom",
+                        labels: {
+                            color: "black",
+                            font: { size: 14 }
+                        }
+                    },
+                    datalabels: {
+                        color: "black",
+                        font: { weight: "bold", size: 14 },
+                        formatter: (value, context) => {
+                            const data = context.chart.data.datasets[0].data;
+                            const total = data.reduce((sum, val) => sum + (val || 0), 0);
+                            if (total === 0) return "0%";  // If no data
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${percentage}%`; // Correct template literal syntax
+                        },
+                        anchor: "center", // Centered label
+                        align: "center" // Centered label alignment
+                    }
                 },
-            },
-            interaction: {
-                intersect: false,
-                mode: "index",
-            },
-            scales: {
-                x: {
-                    display: true,
-                },
-                y: {
-                    display: true,
-                },
-            },
+            };
+        }
+
+        // Data Kualifikasi dan Jabatan
+        const dataKualifikasi = {
+            labels: ['D4', 'S1', 'D3', 'SMA/K'],
+            data: [10, 50, 30, 10],
+            title: "Jumlah"
         };
 
-        // Create Kualifikasi Karyawan chart
-        const KualifikasiChartElement = document.getElementById('KualifikasiChart').getContext('2d');
-        new Chart(KualifikasiChartElement, {
-            type: 'bar', // Bar chart type
-            data: dataKualifikasiChart,
-            options: optionsKualifikasi,
+        const dataJabfung = {
+            labels: ['Dosen', 'Asisten Ahli', 'Lektor', 'Guru Besar'],
+            data: [20, 35, 25, 20],
+            title: "Jumlah"
+        };
+
+        let filterJeniskaryawan = "Kualifikasi";
+        const canvasKaryawan = document.getElementById('BarChartKaryawan').getContext('2d');
+        // Inisialisasi Chart
+        let chartKaryawan = new Chart(canvasKaryawan, {
+            type: 'bar',
+            data: getChartDataKaryawan(),
+            options: getChartOptionsKaryawan()
         });
 
-        // Jabatan Fungsional Karyawan Chart Data
-        const dataJabatanChart = {
-            labels: ['Dosen', 'Asisten Ahli', 'Lector', 'Guru Besar'],
+        // Event listener untuk update chart saat filter diubah
+        document.getElementById('filterJeniskaryawan').addEventListener('change', function () {
+        filterJeniskaryawan = this.value;
+        chartKaryawan.destroy();
+        chartKaryawan = new Chart(canvasKaryawan, {
+            type: 'bar',
+            data: getChartDataKaryawan(),
+            options: getChartOptionsKaryawan()
+            });
+        });
+
+        // Fungsi mendapatkan data grafik berdasarkan filter
+        function getChartDataKaryawan() {
+            const dataset = filterJeniskaryawan === "Kualifikasi" ? dataKualifikasi : dataJabfung;
+            return {
+                labels: dataset.labels,
+                datasets: [{
+                    label: dataset.title,
+                    data: dataset.data,
+                    backgroundColor: "rgba(13, 110, 253, 0.4)",
+                    borderColor: "rgba(13, 110, 253, 0.8)",
+                    borderWidth: 2,
+                    borderRadius: 5,
+                    borderSkipped: false,
+                }]
+            };
+        }
+
+        // Fungsi mendapatkan opsi grafik
+        function getChartOptionsKaryawan() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: filterJeniskaryawan === "Kualifikasi" ? "Kualifikasi Karyawan" : "Jabatan Fungsional",
+                        color: "black",
+                        font: { size: 20, weight: "bold", family: "Barlow" },
+                        padding: { top: 10, bottom: 10 }
+                    },
+                    legend: {
+                        display: true,
+                        position: "top",
+                        labels: { color: "black", font: { size: 14 } }
+                    }
+                },
+                scales: {
+                    x: { display: true },
+                    y: { display: true, beginAtZero: true, ticks: { stepSize: 10 } }
+                }
+            };
+        }
+
+        const canvas2 = document.getElementById('DepartemenChart').getContext('2d');
+        // === Chart Kedua (Departemen - 20 Bar) ===
+        const labelsDepartemen = [
+            "HR", "Finance", "IT", "Marketing", "Sales", "Logistik", "Produksi",
+            "R&D", "QA", "Customer Service", "Administrasi", "Legal", "Engineering",
+            "Design", "Procurement", "Training", "Compliance", "Support", "Security", "Operations"
+        ];
+        const dataDepartemen2 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 100));
+
+        const dataDepartemen2Chart = {
+            labels: labelsDepartemen,
             datasets: [{
-                label: "Jabatan Fungsional Karyawan",
-                data: [20, 35, 25, 20], // Example data: Adjust this with actual values
+                label: "Jumlah",
+                data: dataDepartemen2,
                 backgroundColor: "rgba(13, 110, 253, 0.4)",
                 borderColor: "rgba(13, 110, 253, 0.8)",
                 borderWidth: 2,
                 borderRadius: 5,
                 borderSkipped: false,
-            }],
+            }]
         };
 
-        const optionsJabatan = {
+        const optionsDepartemenChart = {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 title: {
                     display: true,
-                    text: "Jabatan Fungsional Karyawan",
+                    text: "Jumlah Karyawan Berdasarkan Departemen",
                     color: "black",
-                    font: {
-                        size: "20px",
-                        weight: "bold",
-                        family: "Barlow",
-                    },
+                    font: { size: 20, weight: "bold", family: "Barlow" },
+                    padding: { top: 10, bottom: 10 }
                 },
-            },
-            interaction: {
-                intersect: false,
-                mode: "index",
+                legend: {
+                    display: true,
+                    position: "top",
+                    labels: { color: "black", font: { size: 14 } }
+                }
             },
             scales: {
-                x: {
-                    display: true,
-                },
+                x: { display: true },
                 y: {
                     display: true,
-                },
-            },
+                    beginAtZero: true,
+                    ticks: { stepSize: 10 }
+                }
+            }
         };
 
-        // Create Jabatan Fungsional chart
-        const JabatanChartElement = document.getElementById('JafungChart').getContext('2d');
-        new Chart(JabatanChartElement, {
-            type: 'bar', // Bar chart type
-            data: dataJabatanChart,
-            options: optionsJabatan,
+        // Inisialisasi Chart Departemen
+        new Chart(canvas2, {
+            type: 'bar',
+            data: dataDepartemen2Chart,
+            options: optionsDepartemenChart
         });
     </script>
 </body>
