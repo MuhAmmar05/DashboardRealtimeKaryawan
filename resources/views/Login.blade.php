@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -108,29 +108,34 @@
             <!-- Login Form -->
             <h3 class="text-center mb-3">Login Dashboard</h3>
             
-            <!-- Error Alert -->
+            <!-- Error Alert dari Laravel Session -->
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="alert alert-danger d-none" id="error-message">
                 Username atau Password salah!
             </div>
 
-            <form id="login-form">
-                <!-- Username Field -->
+            <form method="POST" action="{{ route('login.process') }}">
+                @csrf
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" placeholder="Masukkan username..." required>
+                    <input type="text" name="username" id="username" class="form-control" required>
                 </div>
-
-                <!-- Password Field -->
+            
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" placeholder="Masukkan password..." required>
+                    <input type="password" name="password" id="password" class="form-control" required>
                 </div>
-
-                <!-- Login Button -->
+            
                 <div class="d-grid mb-3">
-                    <button type="submit" class="btn btn-login">Login</button>
+                    <button type="submit" class="btn btn-primary">Login</button>
                 </div>
             </form>
+            
         </div>
     </div>
 
@@ -141,21 +146,33 @@
     <!-- Link Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom JS (Optional: Login Validation) -->
+    <!-- AJAX Login Script -->
     <script>
         document.getElementById('login-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const csrfToken = document.querySelector('input[name="_token"]').value; // Ambil token CSRF
 
-            if (username === 'astra' && password === 'astra') {
-                alert('Login berhasil!');
-                window.location.href = './dashboard'; // Arahkan ke dashboard
-            } else {
-                const errorMessage = document.getElementById('error-message');
-                errorMessage.classList.remove('d-none');
-            }
+            fetch("{{ route('login.process') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken // Tambahkan CSRF Token ke request
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Login berhasil!");
+                    window.location.href = "/dashboard"; // Redirect ke dashboard
+                } else {
+                    document.getElementById("error-message").classList.remove("d-none");
+                }
+            })
+            .catch(error => console.error("Error:", error));
         });
     </script>
 

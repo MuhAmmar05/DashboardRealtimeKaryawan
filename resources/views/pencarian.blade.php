@@ -26,13 +26,17 @@
     <!-- Sidebar -->
     <div id="sidebar" class="samping">
         <nav class="nav flex-column p-3">
-            <a class="nav-link" href="/login">
-                <i class="bi bi-box-arrow-left me-2"></i> Logout
-            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <a class="nav-link" href="/logout">
+                    <i class="bi bi-box-arrow-left me-2"></i> Logout
+                </a>
+            </form>
+    
             <a class="nav-link" href="/dashboard">
                 <i class="bi bi-grid me-2"></i> Dashboard
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/pencarian">
                 <i class="bi bi-search me-2"></i> Pencarian
             </a>
         </nav>
