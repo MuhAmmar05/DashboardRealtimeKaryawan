@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/js/app.js">
 </head>
-<body style="background-color: white">
+{{-- <body style="background-color: white">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
         <div class="container-fluid">
@@ -85,118 +85,160 @@
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-primary w-100">Cari</button>
                         </div>
-                    </form>
+                    </form> --}}
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4 text-center">Pencarian Karyawan</h1>
-
-        <!-- Form Pencarian -->
-        {{-- <form action="{{ route('pencarian.index') }}" method="GET" class="row g-3 mb-4"> --}}
-        <form action="" method="GET" class="row g-3 mb-4">
-            <div class="col-md-2">
-                <input type="text" name="searchQuery" class="form-control" placeholder="Cari Karyawan..." value="{{ old('searchQuery', $searchQuery ?? '') }}">
-            </div>
-            <div class="col-md-2">
-                <select name="ddsort" class="form-select">
-                    <option value="NPK asc" @selected(old('ddsort', $sort ?? '') == 'NPK asc')>NPK [↑]</option>
-                    <option value="NPK desc" @selected(old('ddsort', $sort ?? '') == 'NPK desc')>NPK [↓]</option>
-                    <option value="Usia asc" @selected(old('ddsort', $sort ?? '') == 'Usia asc')>Usia [↑]</option>
-                    <option value="Usia desc" @selected(old('ddsort', $sort ?? '') == 'Usia desc')>Usia [↓]</option>
-                    <option value="Tanggal Masuk Kerja asc" @selected(old('ddsort', $sort ?? '') == 'Tanggal Masuk Kerja asc')>Tanggal Masuk Kerja [↑]</option>
-                    <option value="Tanggal Masuk Kerja desc" @selected(old('ddsort', $sort ?? '') == 'Tanggal Masuk Kerja desc')>Tanggal Masuk Kerja [↓]</option>
-                    <option value="Golongan asc" @selected(old('ddsort', $sort ?? '') == 'Golongan asc')>Golongan [↑]</option>
-                    <option value="Golongan desc" @selected(old('ddsort', $sort ?? '') == 'Golongan desc')>Golongan [↓]</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="ddjabatan" class="form-select">
-                    <option value="">-- Semua --</option>
-                    <option value="Staff" @selected(old('ddjabatan', $jabatan ?? '') == 'Staff')>Staff</option>
-                    <option value="Kepala Seksi" @selected(old('ddjabatan', $jabatan ?? '') == 'Kepala Seksi')>Kepala Seksi</option>
-                    <option value="Kepala Departemen" @selected(old('ddjabatan', $jabatan ?? '') == 'Kepala Departemen')>Kepala Departemen</option>
-                    <option value="Wakil Direktur" @selected(old('ddjabatan', $jabatan ?? '') == 'Wakil Direktur')>Wakil Direktur</option>
-                    <option value="Direktur" @selected(old('ddjabatan', $jabatan ?? '') == 'Direktur')>Direktur</option>
-                    <option value="Sekretaris Prodi" @selected(old('ddjabatan', $jabatan ?? '') == 'Sekretaris Prodi')>Sekretaris Prodi</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="ddgolongan" class="form-select">
-                    <option value="">-- Semua --</option>
-                    <option value="II" @selected(old('ddgolongan', $golongan ?? '') == 'II')>II</option>
-                    <option value="III" @selected(old('ddgolongan', $golongan ?? '') == 'III')>III</option>
-                    <option value="IV" @selected(old('ddgolongan', $golongan ?? '') == 'IV')>IV</option>
-                    <option value="V" @selected(old('ddgolongan', $golongan ?? '') == 'V')>V</option>
-                    <option value="ABS/Outsourcing" @selected(old('ddgolongan', $golongan ?? '') == 'ABS/Outsourcing')>ABS/ Outsourcing</option>
-                    <option value="DOSEN LUAR" @selected(old('ddgolongan', $golongan ?? '') == 'DOSEN LUAR')>Dosen Luar</option>
-                    <option value="MAGANG" @selected(old('ddgolongan', $golongan ?? '') == 'MAGANG')>Magang</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Cari</button>
-            </div>
-        </form>
-
-        <!-- Tabel Hasil Pencarian -->
-        <div class="table-responsive">
-            <table id="karyawanTable" class="table table-striped table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>No</th>
-                        <th>NPK</th>
-                        <th>Nama Karyawan</th>
-                        <th>Tanggal Lahir</th>
-                        <th>Usia</th>
-                        <th>Kualifikasi</th>
-                        <th>Jenis Kelamin</th>
-                        <th>Jabatan</th>
-                        <th>Departemen</th>
-                        <th>Golongan</th>
-                        <th>Tanggal Masuk Kerja</th>
-                        <th>Jabatan Fungsional Dosen</th>
-                        <th>Lama Kerja</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($karyawan as $index => $data)
-                        <tr>
-                            <td>{{ $data->No }}</td>
-                            <td>{{ $data->NPK }}</td>
-                            <td>{{ $data->{'Nama Karyawan'} }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->{'Tanggal Lahir'})->format('d-m-Y') }}</td>
-                            <td>{{ $data->{'Usia'} }}</td>
-                            <td>{{ $data->Kualifikasi }}</td>
-                            <td>{{ $data->{'Jenis Kelamin'} }}</td>
-                            <td>{{ $data->Jabatan }}</td>
-                            <td>{{ $data->Departemen }}</td>
-                            <td>{{ $data->Golongan }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->{'Tanggal Masuk Kerja'})->format('d-m-Y') }}</td>
-                            <td>{{ $data->{'Jabatan Fungsional Dosen'} }}</td>
-                            <td>{{ $data->{'Lama Kerja'} }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="13" class="text-center">Tidak ada data karyawan ditemukan.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container-fluid">
+            <span class="hamburger text-black" id="hamburger">&#9776;</span>
+            <img src="/assets/astratech.png" alt="Logo" class="logo" id="logo">
         </div>
+    </nav> 
 
-        <!-- Pagination -->
-        {{-- <div class="d-flex justify-content-center mt-4">
-            {{ $karyawan->links('pagination::bootstrap-5') }}
-        </div> --}}
+    <!-- Sidebar -->
+    <div id="sidebar" class="samping">
+        <nav class="nav flex-column p-3">
+            <a class="nav-link" href="/login">
+                <i class="bi bi-box-arrow-left me-2"></i> Logout
+            </a>
+            <a class="nav-link" href="/dashboard">
+                <i class="bi bi-grid me-2"></i> Dashboard
+            </a>
+            <a class="nav-link" href="#">
+                <i class="bi bi-search me-2"></i> Pencarian
+            </a>
+        </nav>
+    </div>
 
-                    <!-- Tombol Export -->
-                    <div class="d-flex">
-                        <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
-                        <button class="btn btn-danger" onclick="exportToPDF()" style="margin-left: 5px">Export to PDF</button>
+    <div id="content" class="">
+        <div class="container mt-5">
+            <h1 class="mb-4 text-center">Pencarian Karyawan</h1>
+    
+            <!-- Form Pencarian -->
+            <form action="{{ route('pencarian.index') }}" method="GET" class="row g-3 mb-4">
+            {{-- <form action="" method="GET" class="row g-3 mb-4"> --}}
+                <div class="col-md-10">
+                    <input type="text" name="searchQuery" class="form-control" placeholder="Cari Karyawan..." value="{{ old('searchQuery', $searchQuery ?? '') }}">
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> </button>
+                </div>
+                <div class="col-md-1">
+                    <button
+                        type="button"
+                        class="btn btn-primary dropdown-toggle px-4 border-start"
+                        title="Saring atau Urutkan Data"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside"
+                    >
+                        <i class="bi bi-funnel"></i>
+                    </button>
+                    <div class="dropdown-menu p-4" style="width: 350px">
+                        <div class="mb-3">
+                            <label for="ddsort" class="form-label fw-bold">Urut Berdasarkan</label>
+                            <select name="ddsort" class="form-select">
+                                <option value="NPK asc" @selected(old('ddsort', $sort ?? '') == 'NPK asc')>NPK [↑]</option>
+                                <option value="NPK desc" @selected(old('ddsort', $sort ?? '') == 'NPK desc')>NPK [↓]</option>
+                                <option value="Usia asc" @selected(old('ddsort', $sort ?? '') == 'Usia asc')>Usia [↑]</option>
+                                <option value="Usia desc" @selected(old('ddsort', $sort ?? '') == 'Usia desc')>Usia [↓]</option>
+                                <option value="Tanggal Masuk Kerja asc" @selected(old('ddsort', $sort ?? '') == 'Tanggal Masuk Kerja asc')>Tanggal Masuk Kerja [↑]</option>
+                                <option value="Tanggal Masuk Kerja desc" @selected(old('ddsort', $sort ?? '') == 'Tanggal Masuk Kerja desc')>Tanggal Masuk Kerja [↓]</option>
+                                <option value="Golongan asc" @selected(old('ddsort', $sort ?? '') == 'Golongan asc')>Golongan [↑]</option>
+                                <option value="Golongan desc" @selected(old('ddsort', $sort ?? '') == 'Golongan desc')>Golongan [↓]</option>
+                            </select>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="ddjabatan" class="form-label fw-bold">Jabatan</label>
+                            <select name="ddjabatan" class="form-select">
+                                <option value="">-- Semua --</option>
+                                <option value="Staff" @selected(old('ddjabatan', $jabatan ?? '') == 'Staff')>Staff</option>
+                                <option value="Kepala Seksi" @selected(old('ddjabatan', $jabatan ?? '') == 'Kepala Seksi')>Kepala Seksi</option>
+                                <option value="Kepala Departemen" @selected(old('ddjabatan', $jabatan ?? '') == 'Kepala Departemen')>Kepala Departemen</option>
+                                <option value="Wakil Direktur" @selected(old('ddjabatan', $jabatan ?? '') == 'Wakil Direktur')>Wakil Direktur</option>
+                                <option value="Direktur" @selected(old('ddjabatan', $jabatan ?? '') == 'Direktur')>Direktur</option>
+                                <option value="Sekretaris Prodi" @selected(old('ddjabatan', $jabatan ?? '') == 'Sekretaris Prodi')>Sekretaris Prodi</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ddgolongan" class="form-label fw-bold">Golongan</label>
+                            <select name="ddgolongan" class="form-select">
+                                <option value="">-- Semua --</option>
+                                <option value="II" @selected(old('ddgolongan', $golongan ?? '') == 'II')>II</option>
+                                <option value="III" @selected(old('ddgolongan', $golongan ?? '') == 'III')>III</option>
+                                <option value="IV" @selected(old('ddgolongan', $golongan ?? '') == 'IV')>IV</option>
+                                <option value="V" @selected(old('ddgolongan', $golongan ?? '') == 'V')>V</option>
+                                <option value="ABS/Outsourcing" @selected(old('ddgolongan', $golongan ?? '') == 'ABS/Outsourcing')>ABS/ Outsourcing</option>
+                                <option value="DOSEN LUAR" @selected(old('ddgolongan', $golongan ?? '') == 'DOSEN LUAR')>Dosen Luar</option>
+                                <option value="MAGANG" @selected(old('ddgolongan', $golongan ?? '') == 'MAGANG')>Magang</option>
+                            </select>
+                        </div>
                     </div>
+                </div>
+            </form>
+    
+            <!-- Tabel Hasil Pencarian -->
+            <div class="table-responsive">
+                <table id="karyawanTable" class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>NPK</th>
+                            <th>Nama Karyawan</th>
+                            <th>Tanggal Lahir</th>
+                            <th>Usia</th>
+                            <th>Kualifikasi</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Jabatan</th>
+                            <th>Departemen</th>
+                            <th>Golongan</th>
+                            <th>Tanggal Masuk Kerja</th>
+                            <th>Jabatan Fungsional Dosen</th>
+                            <th>Lama Kerja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($karyawan as $index => $data)
+                            <tr>
+                                <td>{{ $data->No }}</td>
+                                <td>{{ $data->NPK }}</td>
+                                <td>{{ $data->{'Nama Karyawan'} }}</td>
+                                <td>{{ \Carbon\Carbon::parse($data->{'Tanggal Lahir'})->format('d-m-Y') }}</td>
+                                <td>{{ $data->{'Usia'} }}</td>
+                                <td>{{ $data->Kualifikasi }}</td>
+                                <td>{{ $data->{'Jenis Kelamin'} }}</td>
+                                <td>{{ $data->Jabatan }}</td>
+                                <td>{{ $data->Departemen }}</td>
+                                <td>{{ $data->Golongan }}</td>
+                                <td>{{ \Carbon\Carbon::parse($data->{'Tanggal Masuk Kerja'})->format('d-m-Y') }}</td>
+                                <td>{{ $data->{'Jabatan Fungsional Dosen'} }}</td>
+                                <td>{{ $data->{'Lama Kerja'} }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="13" class="text-center">Tidak ada data karyawan ditemukan.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+    
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $karyawan->links('pagination::bootstrap-5') }}
+            </div>
+    
+            <!-- Tombol Export -->
+            <div class="d-flex flex-column">
+                <div class="mb-3">
+                    <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
+                    <button class="btn btn-danger" onclick="exportToPDF()" style="margin-left: 5px">Export to PDF</button>
                 </div>
             </div>
         </div>
     </div>
-
+        
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
