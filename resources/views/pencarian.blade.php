@@ -102,7 +102,7 @@
     <!-- Sidebar -->
     <div id="sidebar" class="samping">
         <nav class="nav flex-column p-3">
-            <a class="nav-link" href="/login">
+            <a class="nav-link" href="/logout">
                 <i class="bi bi-box-arrow-left me-2"></i> Logout
             </a>
             <a class="nav-link" href="/dashboard">

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
+    use HasFactory;
     protected $table = 'sso_msuser';
     public $incrementing = false;
     public $timestamps = false;
@@ -15,6 +17,7 @@ class User extends Model
         'usr_id',
         'rol_id',
         'app_id',
+        'usr_password',
         'usr_status',
         'usr_created_by',
         'usr_created_date',

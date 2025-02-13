@@ -119,7 +119,7 @@
                 Username atau Password salah!
             </div>
 
-            <form method="POST" action="{{ route('login.process') }}">
+            <form method="POST" action="">
                 @csrf
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
