@@ -52,5 +52,9 @@ Route::get('/pencarian', function () {
     return app(PencarianController::class)->index(request());
 })->name('pencarian.index');
 
+Route::get('/pencarian/export-excel', [PencarianController::class, 'exportExcel'])->name('pencarian.exportExcel');  // Rute untuk ekspor Excel
+
+Route::get('/pencarian/export-pdf', [PencarianController::class, 'exportToPDF'])->name('pencarian.exportToPDF');  // Rute untuk ekspor PDF
+
 // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 // Route::get('/pencarian', [PencarianController::class, 'index'])->name('pencarian.index');
