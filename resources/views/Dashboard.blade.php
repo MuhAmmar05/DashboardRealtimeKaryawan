@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Sidebar with Charts</title>
+    <title>Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -26,19 +26,21 @@
     <!-- Sidebar -->
     <div id="sidebar" class="samping">
         <nav class="nav flex-column p-3">
-            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+            {{-- <form id="logout-form" action="{{ route('logout') }}" method="POST">
                 @csrf
-                <a class="nav-link" href="/logout">
-                    <i class="bi bi-box-arrow-left me-2"></i> Logout
-                </a>
-            </form>
+            </form> --}}
+            <a class="nav-link" href="/logout">
+                <i class="bi bi-box-arrow-left me-2"></i> Logout
+            </a>
     
             <a class="nav-link" href="/dashboard">
                 <i class="bi bi-grid me-2"></i> Dashboard
             </a>
+            @if($role === 'ROL01')
             <a class="nav-link" href="/pencarian">
                 <i class="bi bi-search me-2"></i> Pencarian
             </a>
+            @endif
         </nav>
     </div>
     
@@ -107,33 +109,39 @@
                                 <i class="bi bi-funnel"></i>
                             </button>
                             <div class="dropdown-menu p-4" style="width: 350px">
-                                <div class="mb-3">
-                                    <label for="filterJenisKehadiran" class="form-label fw-bold">Jenis Kehadiran</label>
-                                    <select id="filterJenisKehadiran" class="form-select">
-                                        <option value="Departemen">Departemen</option>
-                                        <option value="Periode">Periode</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="filterPeriodeKehadiran" class="form-label fw-bold">Periode Kehadiran</label>
-                                    <select name="filterPeriodeKehadiran" class="form-select">
-                                        <option value="1">Bulanan</option>
-                                        <option value="2">Mingguan</option>
-                                        <option value="3">Harian</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="dtTanggalMulai" class="form-label fw-bold">Tanggal Mulai</label>
-                                    <input type="date" name="dtTanggalMulai" id="dtTanggalMulai" class="form-control">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="dtTanggalAkhir" class="form-label fw-bold">Tanggal Akhir</label>
-                                    <input type="date" name="dtTanggalAkhir" id="dtTanggalAkhir" class="form-control">
-                                </div>
-                                <button type="button" class="btn btn-success">Cari Data</button>
+                                <form id="filterForm" action="" method="GET">
+                                    <div class="mb-3">
+                                        <label for="filterJenisKehadiran" class="form-label fw-bold">Jenis Kehadiran</label>
+                                        <select id="filterJenisKehadiran" name="filterJenisKehadiran" class="form-select">
+                                            <option value="Departemen">Departemen</option>
+                                            <option value="Periode">Periode</option>
+                                        </select>
+                                    </div>
+    
+                                    <div class="mb-3">
+                                        <label for="filterPeriodeKehadiran" class="form-label fw-bold">Periode Kehadiran</label>
+                                        <select id="filterPeriodeKehadiran" name="filterPeriodeKehadiran" class="form-select">
+                                            <option value="1">Bulanan</option>
+                                            <option value="2">Mingguan</option>
+                                            <option value="3">Harian</option>
+                                        </select>
+                                    </div>
+    
+                                    <div class="mb-3">
+                                        <label for="dtTanggalMulai" class="form-label fw-bold">Tanggal Mulai</label>
+                                        <span class="text-danger"> *</span>
+                                        <span id="errorMulai" class="fw-normal text-danger"></span>
+                                        <input type="date" name="dtTanggalMulai" id="dtTanggalMulai" class="form-control">
+                                    </div>
+    
+                                    <div class="mb-3">
+                                        <label for="dtTanggalAkhir" class="form-label fw-bold">Tanggal Akhir</label>
+                                        <span class="text-danger"> *</span>
+                                        <span id="errorAkhir" class="fw-normal text-danger"></span>
+                                        <input type="date" name="dtTanggalAkhir" id="dtTanggalAkhir" class="form-control">
+                                    </div>
+                                    <button type="submit" id="btnCari" class="btn btn-success">Cari Data</button>
+                                </form>
                             </div>
                         </div>
                         <canvas id="KehadiranChart" class="chart-canvas" style="height: 400px"></canvas>
@@ -207,52 +215,24 @@
         </div>
     </div>
 
-        <!-- Jika session untuk login berhasil ada -->
-        @if(session('success'))
-        <script>
-            // Menampilkan SweetAlert2 setelah login berhasil
-            Swal.fire({
-                icon: 'success',
-                title: 'Selamat datang, {{ session('user') }}',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @elseif(session('error'))
-        <script>
-            // Menampilkan SweetAlert2 jika login gagal
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '{{ session('error') }}',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif
+        
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Sidebar Toggle Script -->
     <script>
+        
         const departemenJSON = @json($departemen);
         const genderJSON = @json($gender);
         const jabatanJSON = @json($jabatan);
         const jafungJSON = @json($jafung);
         const kualifikasiJSON = @json($kualifikasi);
         const usiaJSON = @json($usia);
-        const kehadiranDepartemenJSON = @json($kehadiranDepartemen);
-
-        console.log(departemenJSON); // Tambahkan ini untuk memeriksa data di konsol
-    // console.log(genderJSON);
-    // console.log(jabatanJSON);
-    console.log(jafungJSON);
-    console.log(kualifikasiJSON);
-    // console.log(usiaJSON);
-    // console.log(kehadiranDepartemenJSON);
+        const kehadiranDepartemenJSON = @json($kehadiran);
 
         const departemenList = kehadiranDepartemenJSON.map(item => item["DEPARTEMEN"]);
         const kehadiranList = kehadiranDepartemenJSON.map(item => item["PERSENTASE KEHADIRAN"]);
+        const AttendanceChartElement = document.getElementById('KehadiranChart').getContext('2d');
 
         document.getElementById('hamburger').addEventListener('click', function () {
             const sidebar = document.getElementById('sidebar');
@@ -266,66 +246,208 @@
             logo.classList.toggle('active');
         });
 
-        // Kehadiran Karyawan Chart Data
-        const dataKehadiranChart = {
-            labels: departemenList,
-            datasets: [{
-                label: "Persentase",
-                data: kehadiranList,
-                backgroundColor: "blue",
-                borderColor: "blue",
-                tension: 0.4,
-            }],
-        };
-        
-        const optionsKehadiran = {
-            responsive: true, // Responsif secara otomatis
-            maintainAspectRatio: false, // Jangan paksa rasio aspek 
-            plugins: {
-            title: {
-                display: true,
-                text: "Tingkat Kehadiran Karyawan Sebulan Terakhir (%)",
-                color: "black",
-                font: {
-                size: "20px",
-                weight: "bold",
-                family: "Barlow",
+        document.addEventListener('DOMContentLoaded', function () {
+            const dtTanggalMulai = document.getElementById('dtTanggalMulai');
+            const dtTanggalAkhir = document.getElementById('dtTanggalAkhir');
+            const filterJenisKehadiran = document.getElementById('filterJenisKehadiran');
+            const filterPeriodeKehadiran = document.getElementById('filterPeriodeKehadiran');
+            const cariDataButton = document.getElementById('btnCari');
+            const filterForm = document.getElementById('filterForm');
+            const errorTanggalMulai = document.getElementById('errorMulai');
+            const errorTanggalAkhir = document.getElementById('errorAkhir');
+
+            // Set the maximum date to today
+            const today = new Date().toISOString().split('T')[0];
+            dtTanggalMulai.max = today;
+            dtTanggalAkhir.max = today;
+
+            // Set the minimum date for dtTanggalMulai to 1 year ago
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            dtTanggalMulai.min = oneYearAgo.toISOString().split('T')[0];
+
+            filterJenisKehadiran.addEventListener('change', function () {
+                const filterPeriodeKehadiranParent = filterPeriodeKehadiran.parentElement;
+                if (this.value === 'Departemen') {
+                    filterPeriodeKehadiranParent.style.display = 'none';
+                    filterPeriodeKehadiran.value = 0;
+                } else {
+                    filterPeriodeKehadiranParent.style.display = 'block';
+                    filterPeriodeKehadiran.value = 1; // Set value to empty string
+                }
+            });
+
+            // Trigger the change event on page load to set the initial state
+            document.getElementById('filterJenisKehadiran').dispatchEvent(new Event('change'));
+
+            cariDataButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent form submission
+
+                const startDate = dtTanggalMulai.value;
+                const endDate = dtTanggalAkhir.value;
+
+                // Reset error messages
+                errorTanggalMulai.textContent = '';
+                errorTanggalAkhir.textContent = '';
+
+                // Validasi nilai tanggal tidak boleh kosong
+                if (!startDate) {
+                    errorTanggalMulai.textContent = 'Tanggal mulai tidak boleh kosong.';
+                    return;
+                }
+
+                if (!endDate) {
+                    errorTanggalAkhir.textContent = 'Tanggal akhir tidak boleh kosong.';
+                    return;
+                }
+
+                // Validasi tanggal akhir tidak boleh sebelum tanggal mulai
+                if (new Date(endDate) < new Date(startDate)) {
+                    errorTanggalAkhir.textContent = 'Tanggal akhir tidak boleh sebelum tanggal mulai.';
+                    return;
+                }
+
+                const formData = new FormData(filterForm);
+                const filterValue = filterJenisKehadiran.value;
+                const chartType = filterValue === 'Departemen' ? 'bar' : 'line';
+
+                fetch('{{ route('dashboard.getKehadiran') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+
+                    const labels = data.map(item => item['DEPARTEMEN'] || item['PERIODE'] || item['TANGGAL']);
+                    const chartData = data.map(item => item['PERSENTASE KEHADIRAN'] || item['PERSENTASE_KEHADIRAN']);
+
+                    // Destroy existing chart if any
+                    if (window.attendanceChart) {
+                        window.attendanceChart.destroy();
+                    }
+
+                    // Create new chart based on filter value
+                    const ctx = document.getElementById('KehadiranChart').getContext('2d');
+                    window.attendanceChart = new Chart(ctx, {
+                        type: chartType,
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: filterValue === 'Departemen' ? 'Persentase Kehadiran' : 'Data Periode',
+                                data: chartData,
+                                backgroundColor: filterValue === 'Departemen' ? 'blue' : 'rgba(75, 192, 192, 0.2)',
+                                borderColor: filterValue === 'Departemen' ? 'blue' : 'rgba(75, 192, 192, 1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true, // Responsif secara otomatis
+                            maintainAspectRatio: false, // Jangan paksa rasio aspek 
+                            plugins: {
+                            title: {
+                                display: true,
+                                text: "Tingkat Kehadiran Karyawan (%)",
+                                color: "black",
+                                font: {
+                                size: "20px",
+                                weight: "bold",
+                                family: "Barlow",
+                                },
+                            },
+                            },
+                            interaction: {
+                            intersect: false,
+                            mode: "index",
+                            },
+                            scales: {
+                            x: {
+                                display: true,
+                            },
+                            y: {
+                                display: true,
+                                // min: 0, // Mulai dari 0%
+                                // max: 100, // Batas maksimum 100%
+                                ticks: {
+                                callback: function(value) {
+                                    return value + "%"; // Menampilkan angka dalam persen
+                                }
+                                }
+                            },
+                            },
+                        }
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+            });
+
+            // Initialize default chart
+            const departemenList = kehadiranDepartemenJSON.map(item => item["DEPARTEMEN"]);
+            const kehadiranList = kehadiranDepartemenJSON.map(item => item["PERSENTASE KEHADIRAN"]);
+            const AttendanceChartElement = document.getElementById('KehadiranChart').getContext('2d');
+
+            const dataKehadiranChart = {
+                labels: departemenList,
+                datasets: [{
+                    label: "Persentase",
+                    data: kehadiranList,
+                    backgroundColor: "blue",
+                    borderColor: "blue",
+                    tension: 0.4,
+                }],
+            };
+
+            const optionsKehadiran = {
+                responsive: true, // Responsif secara otomatis
+                maintainAspectRatio: false, // Jangan paksa rasio aspek 
+                plugins: {
+                title: {
+                    display: true,
+                    text: "Tingkat Kehadiran Karyawan Sebulan Terakhir (%)",
+                    color: "black",
+                    font: {
+                    size: "20px",
+                    weight: "bold",
+                    family: "Barlow",
+                    },
                 },
-            },
-            },
-            interaction: {
-            intersect: false,
-            mode: "index",
-            },
-            scales: {
-            x: {
-                display: true,
-            },
-            y: {
-                display: true,
-                // min: 0, // Mulai dari 0%
-                // max: 100, // Batas maksimum 100%
-                ticks: {
-                callback: function(value) {
-                    return value + "%"; // Menampilkan angka dalam persen
-                }
-                }
-            },
-            },
-        };
+                },
+                interaction: {
+                intersect: false,
+                mode: "index",
+                },
+                scales: {
+                x: {
+                    display: true,
+                },
+                y: {
+                    display: true,
+                    // min: 0, // Mulai dari 0%
+                    // max: 100, // Batas maksimum 100%
+                    ticks: {
+                    callback: function(value) {
+                        return value + "%"; // Menampilkan angka dalam persen
+                    }
+                    }
+                },
+                },
+            };
 
-        // Create Kehadiran Karyawan chart
-        const AttendanceChartElement = document.getElementById('KehadiranChart').getContext('2d');
-        new Chart(AttendanceChartElement, {
-            type: 'bar',
-            data: dataKehadiranChart,
-            options: optionsKehadiran,
-        });
+            // Destroy existing chart if any
+            if (window.attendanceChart) {
+                window.attendanceChart.destroy();
+            }
 
-        // Initial dummy data for chart
-        // const dataGender = [50, 50]; // Dummy data for Gender
-        const dataJabatan = [20, 30, 25, 15, 5, 5]; // Dummy data for Jabatan
-        // const dataUsia = [10, 15, 20, 10, 5, 10, 30]; // Dummy data for Usia
+            // Create Kehadiran Karyawan chart
+            window.attendanceChart = new Chart(AttendanceChartElement, {
+                type: 'bar',
+                data: dataKehadiranChart,
+                options: optionsKehadiran,
+            });
+        });    
 
         let filterJenis = 'Gender'; // Initial filter value
         const PieChartElement = document.getElementById('PieChart').getContext('2d');
@@ -440,18 +562,6 @@
             };
         }
 
-        // Data Kualifikasi dan Jabatan
-        // const dataKualifikasi = {
-        //     labels: ['D4', 'S1', 'D3', 'SMA/K'],
-        //     data: [10, 50, 30, 10],
-        //     title: "Jumlah"
-        // };
-
-        // const dataJabfung = {
-        //     labels: ['Dosen', 'Asisten Ahli', 'Lektor', 'Guru Besar'],
-        //     data: [20, 35, 25, 20],
-        //     title: "Jumlah"
-        // };
 
         let filterJeniskaryawan = "Kualifikasi";
 
@@ -480,8 +590,6 @@
             },
             y: {
                 display: true,
-                // min: 0, // Mulai dari 0%
-                // max: 100, // Batas maksimum 100%
                 ticks: {
                     stepSize: 2, // Mengatur agar nilai sumbu Y menjadi 0, 2, 4, 6, dst.
                 },
@@ -524,56 +632,8 @@
             };
         }
 
-        // Fungsi mendapatkan opsi grafik
-        // function getChartOptionsKaryawan() {
-        //     return {
-        //         responsive: true,
-        //         maintainAspectRatio: false,
-        //         plugins: {
-        //             title: {
-        //                 display: true,
-        //                 text:
-        //                 filterJeniskaryawan === "Kualifikasi"
-        //                     ? "Kualifikasi Karyawan"
-        //                     : "Jabatan Fungsional",
-        //                 color: "black",
-        //                 font: {
-        //                 size: "20px",
-        //                 weight: "bold",
-        //                 family: "Barlow",
-        //                 },
-        //             },
-        //         },
-        //         interaction: {
-        //         intersect: false,
-        //         mode: "index",
-        //         },
-        //         scales: {
-        //             x: {
-        //                 display: true,
-        //             },
-        //             y: {
-        //                 display: true,
-        //                 min: 0, // Pastikan sumbu Y selalu mulai dari 0
-        //                 max: dataJenisChart2()?.yAxisMax || 10, // Gunakan nilai maksimum dari chart, default ke 10 jika data tidak ada
-        //                 ticks: {
-        //                 stepSize: 2, // Mengatur agar nilai sumbu Y menjadi 0, 2, 4, 6, dst.
-        //                 },
-        //             },
-        //         },
-        //     };
-        // }
-
-        
-
+       
         const canvas2 = document.getElementById('DepartemenChart').getContext('2d');
-        // === Chart Kedua (Departemen - 20 Bar) ===
-        // const labelsDepartemen = [
-        //     "HR", "Finance", "IT", "Marketing", "Sales", "Logistik", "Produksi",
-        //     "R&D", "QA", "Customer Service", "Administrasi", "Legal", "Engineering",
-        //     "Design", "Procurement", "Training", "Compliance", "Support", "Security", "Operations"
-        // ];
-        // const dataDepartemen2 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 100));
 
         const dataDepartemen2Chart = {
             labels: Object.keys(departemenJSON),
@@ -649,6 +709,28 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Jika session untuk login berhasil ada -->
+    {{-- @if(session('success'))
+    <script>
+        // Menampilkan SweetAlert2 setelah login berhasil
+        Swal.fire({
+            icon: 'success',
+            title: 'Selamat datang, {{ session('user') }}',
+            text: '{{ session('success') }}',
+            confirmButtonText: 'OK'
+        });
+    </script>
+    @elseif(session('error'))
+    <script>
+        // Menampilkan SweetAlert2 jika login gagal
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '{{ session('error') }}',
+            confirmButtonText: 'OK'
+        });
+    </script>
+    @endif --}}
     <!-- Notifikasi SweetAlert -->
     @if(session('message'))
     <script>

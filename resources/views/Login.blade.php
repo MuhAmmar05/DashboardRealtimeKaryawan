@@ -119,7 +119,7 @@
                 Username atau Password salah!
             </div>
 
-            <form method="POST" action="">
+            <form method="POST" action="{{ route('login.process') }}" id="login-form">
                 @csrf
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
@@ -145,36 +145,6 @@
 
     <!-- Link Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- AJAX Login Script -->
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const csrfToken = document.querySelector('input[name="_token"]').value; // Ambil token CSRF
-
-            fetch("{{ route('login.process') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken // Tambahkan CSRF Token ke request
-                },
-                body: JSON.stringify({ username, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    alert("Login berhasil!");
-                    window.location.href = "/dashboard"; // Redirect ke dashboard
-                } else {
-                    document.getElementById("error-message").classList.remove("d-none");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        });
-    </script>
 
 </body>
 </html>
