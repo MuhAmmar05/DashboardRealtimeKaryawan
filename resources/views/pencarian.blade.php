@@ -149,6 +149,10 @@
                 </table>
             </div>
 
+            <div class="d-flex justify-content-center mt-4">
+                {{ $karyawan->links('pagination::bootstrap-5') }}
+            </div>
+
             <!-- Button Export -->
             <div class="d-flex justify-content-end mt-3">
                 <button id="exportExcelBtn" class="btn btn-success me-2">Export ke Excel</button>
@@ -158,7 +162,18 @@
     </div>
 
     <script>
-        // Export to Excel
+        document.getElementById('hamburger').addEventListener('click', function () {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            const hamburger = document.getElementById('hamburger');
+            const logo = document.getElementById('logo');
+
+            sidebar.classList.toggle('active');
+            content.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            logo.classList.toggle('active');
+        });
+
         document.getElementById('exportExcelBtn').addEventListener('click', function () {
             var workbook = new ExcelJS.Workbook();
             var worksheet = workbook.addWorksheet('Data Karyawan');

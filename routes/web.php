@@ -60,6 +60,3 @@ Route::get('/pencarian/export-excel', [PencarianController::class, 'exportExcel'
 Route::get('/pencarian/export-pdf', [PencarianController::class, 'exportToPDF'])->name('pencarian.exportToPDF');  // Rute untuk ekspor PDF
 
 Route::post('/dashboard/getKehadiran', [DashboardController::class, 'getKehadiran'])->name('dashboard.getKehadiran');
-
-// Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-// Route::get('/pencarian', [PencarianController::class, 'index'])->name('pencarian.index');
