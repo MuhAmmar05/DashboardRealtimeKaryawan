@@ -41,10 +41,9 @@
     <div id="content" class="">
         <div class="container mt-5">
             <h1 class="mb-4 text-center">Pencarian Karyawan</h1>
-    
+
             <!-- Form Pencarian -->
             <form action="{{ route('pencarian.index') }}" method="GET" class="row g-3 mb-4">
-            {{-- <form action="" method="GET" class="row g-3 mb-4"> --}}
                 <div class="col-md-10">
                     <input type="text" name="searchQuery" class="form-control" placeholder="Cari Karyawan..." value="{{ old('searchQuery', $searchQuery ?? '') }}">
                 </div>
@@ -75,7 +74,7 @@
                                 <option value="Golongan desc" @selected(old('ddsort', $sort ?? '') == 'Golongan desc')>Golongan [↓]</option>
                             </select>
                         </div>
-    
+
                         <div class="mb-3">
                             <label for="ddjabatan" class="form-label fw-bold">Jabatan</label>
                             <select name="ddjabatan" class="form-select">
@@ -88,7 +87,7 @@
                                 <option value="Sekretaris Prodi" @selected(old('ddjabatan', $jabatan ?? '') == 'Sekretaris Prodi')>Sekretaris Prodi</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="ddgolongan" class="form-label fw-bold">Golongan</label>
                             <select name="ddgolongan" class="form-select">
@@ -105,7 +104,7 @@
                     </div>
                 </div>
             </form>
-    
+
             <!-- Tabel Hasil Pencarian -->
             <div class="table-responsive">
                 <table id="karyawanTable" class="table table-striped table-bordered">
@@ -127,7 +126,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($karyawan as $index => $data)
+                        @forelse($karyawan as $index =>$data)
                             <tr>
                                 <td>{{ $data->No }}</td>
                                 <td>{{ $data->NPK }}</td>
@@ -136,111 +135,122 @@
                                 <td>{{ $data->{'Usia'} }}</td>
                                 <td>{{ $data->Kualifikasi }}</td>
                                 <td>{{ $data->{'Jenis Kelamin'} }}</td>
-                                <td>{{ $data->Jabatan }}</td>
-                                <td>{{ $data->Departemen }}</td>
-                                <td>{{ $data->Golongan }}</td>
+                                <td>{{ $data->{'Jabatan'} }}</td>
+                                <td>{{ $data->{'Departemen'} }}</td>
+                                <td>{{ $data->{'Golongan'} }}</td>
                                 <td>{{ \Carbon\Carbon::parse($data->{'Tanggal Masuk Kerja'})->format('d-m-Y') }}</td>
                                 <td>{{ $data->{'Jabatan Fungsional Dosen'} }}</td>
                                 <td>{{ $data->{'Lama Kerja'} }}</td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="13" class="text-center">Tidak ada data karyawan ditemukan.</td>
-                            </tr>
+                            <tr><td colspan="13">Data tidak ditemukan</td></tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-    
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
-                {{ $karyawan->links('pagination::bootstrap-5') }}
-            </div>
-    
-            <!-- Tombol Export -->
-            <div class="d-flex flex-column">
-                <div class="mb-3">
-                    <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
-                    <button class="btn btn-danger" onclick="exportToPDF()" style="margin-left: 5px">Export to PDF</button>
-                </div>
+
+            <!-- Button Export -->
+            <div class="d-flex justify-content-end mt-3">
+                <button id="exportExcelBtn" class="btn btn-success me-2">Export ke Excel</button>
+                <button id="exportPdfBtn" class="btn btn-danger">Export ke PDF</button>
             </div>
         </div>
     </div>
-        
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('hamburger').addEventListener('click', function () {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('content');
-            const hamburger = document.getElementById('hamburger');
-            const logo = document.getElementById('logo');
+        // Export to Excel
+        document.getElementById('exportExcelBtn').addEventListener('click', function () {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Data Karyawan');
 
-            sidebar.classList.toggle('active');
-            content.classList.toggle('active');
-            hamburger.classList.toggle('active');
-            logo.classList.toggle('active');
-        });
-        async function exportToExcel() {
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Karyawan');
-
-            // Menambahkan header
             worksheet.columns = [
-                { header: 'No', key: 'no', width: 5 },
-                { header: 'NPK', key: 'npk', width: 10 },
-                { header: 'Nama Karyawan', key: 'nama', width: 25 },
-                { header: 'Tanggal Lahir', key: 'tgl_lahir', width: 15 },
-                { header: 'Usia', key: 'usia', width: 10 },
-                { header: 'Jenis Kelamin', key: 'jk', width: 15 },
-                { header: 'Jabatan', key: 'jabatan', width: 38 },
-                { header: 'Golongan', key: 'golongan', width: 10 },
-                { header: 'Tanggal Masuk Kerja', key: 'tgl_masuk', width: 20 },
-                { header: 'Lama Kerja', key: 'lama_kerja', width: 15 },
+                { header: 'No', key: 'No', width: 10 },
+                { header: 'NPK', key: 'NPK', width: 20 },
+                { header: 'Nama Karyawan', key: 'NamaKaryawan', width: 30 },
+                { header: 'Tanggal Lahir', key: 'TanggalLahir', width: 20 },
+                { header: 'Usia', key: 'Usia', width: 10 },
+                { header: 'Kualifikasi', key: 'Kualifikasi', width: 20 },
+                { header: 'Jenis Kelamin', key: 'JenisKelamin', width: 20 },
+                { header: 'Jabatan', key: 'Jabatan', width: 40 },
+                { header: 'Departemen', key: 'Departemen', width: 80 },
+                { header: 'Golongan', key: 'Golongan', width: 10 },
+                { header: 'Tanggal Masuk Kerja', key: 'TanggalMasukKerja', width: 20 },
+                { header: 'Jabatan Fungsional Dosen', key: 'JabatanFungsionalDosen', width: 30 },
+                { header: 'Lama Kerja', key: 'LamaKerja', width: 15 }
             ];
 
-            // Menambahkan data
-            document.querySelectorAll('#karyawanTable tbody tr').forEach((row, index) => {
-                const cells = row.querySelectorAll('td');
-                worksheet.addRow({
-                    no: cells[0].innerText,
-                    npk: cells[1].innerText,
-                    nama: cells[2].innerText,
-                    tgl_lahir: cells[3].innerText,
-                    usia: cells[4].innerText,
-                    jk: cells[5].innerText,
-                    jabatan: cells[6].innerText,
-                    golongan: cells[7].innerText,
-                    tgl_masuk: cells[8].innerText,
-                    lama_kerja: cells[9].innerText,
+            let rows = [];
+            @foreach($karyawan as $data)
+                rows.push({
+                    No: '{{ $data->No }}',
+                    NPK: '{{ $data->NPK }}',
+                    NamaKaryawan: '{{ $data->{'Nama Karyawan'} }}',
+                    TanggalLahir: '{{ \Carbon\Carbon::parse($data->{'Tanggal Lahir'})->format('d-m-Y') }}',
+                    Usia: '{{ $data->{'Usia'} }}',
+                    Kualifikasi: '{{ $data->Kualifikasi }}',
+                    JenisKelamin: '{{ $data->{'Jenis Kelamin'} }}',
+                    Jabatan: '{{ $data->{'Jabatan'} }}',
+                    Departemen: '{{ $data->{'Departemen'} }}',
+                    Golongan: '{{ $data->{'Golongan'} }}',
+                    TanggalMasukKerja: '{{ \Carbon\Carbon::parse($data->{'Tanggal Masuk Kerja'})->format('d-m-Y') }}',
+                    JabatanFungsionalDosen: '{{ $data->{'Jabatan Fungsional Dosen'} }}',
+                    LamaKerja: '{{ $data->{'Lama Kerja'} }}'
                 });
-            });
+            @endforeach
 
-            // Styling header
+            worksheet.addRows(rows);
+            // Membuat header menjadi bold
             worksheet.getRow(1).font = { bold: true };
-            worksheet.getRow(1).alignment = { horizontal: 'center' };
 
-            // Mengunduh file
-            const buffer = await workbook.xlsx.writeBuffer();
-            saveAs(new Blob([buffer]), 'data_karyawan.xlsx');
-        }
-
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.autoTable({
-                html: '#karyawanTable',
-                theme: 'grid',
-                styles: {
-                    fontSize: 8,
-                    cellPadding: 2
-                },
-                headStyles: {
-                    fillColor: [0, 0, 0]
-                }
+            // Membuat tabel dari data yang sudah ada
+            worksheet.addTable({
+                name: 'DataKaryawanTable',
+                ref: 'A1',
+                columns: worksheet.columns.map(col => ({ name: col.header })),
+                rows: rows.map(row => Object.values(row))
             });
-            doc.save('data_karyawan.pdf');
-        }
+
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                var blob = new Blob([buffer], { type: 'application/octet-stream' });
+                saveAs(blob, 'Data_Karyawan.xlsx');
+            });
+        });
+
+        // Export ke PDF
+        document.getElementById('exportPdfBtn').addEventListener('click', function () {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+
+            // Mendefinisikan header dan baris tabel
+            let tableHeaders = ['No', 'NPK', 'Nama Karyawan', 'Tanggal Lahir', 'Usia', 'Kualifikasi', 'Jenis Kelamin', 'Jabatan', 'Departemen', 'Golongan', 'Tanggal Masuk Kerja', 'Jabatan Fungsional Dosen', 'Lama Kerja'];
+            let tableRows = [];
+
+            // Mengambil baris-baris tabel dan memasukkan ke dalam array
+            document.querySelectorAll('#karyawanTable tbody tr').forEach(function (row) {
+                let rowData = [];
+                row.querySelectorAll('td').forEach(function (cell) {
+                    rowData.push(cell.textContent);
+                });
+                tableRows.push(rowData);
+            });
+
+            // Menambahkan plugin auto-table untuk menghasilkan tabel dalam PDF
+            doc.autoTable({
+                head: [tableHeaders],       // Header tabel
+                body: tableRows,           // Data tabel
+                startY: 30,                // Mulai dari posisi vertikal 30
+                theme: 'striped',          // Tema tabel (striped)
+                headStyles: { fillColor: [22, 160, 133] }, // Warna latar belakang header
+                margin: { top: 10 },       // Margin atas
+            });
+
+            // Menyimpan PDF yang dihasilkan dengan nama 'Data_Karyawan.pdf'
+            doc.save('Data_Karyawan.pdf');
+        });
+
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
